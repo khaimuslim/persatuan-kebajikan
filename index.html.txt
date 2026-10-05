@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pengurusan Ahli Persatuan Kebajikan</title>
+    <!-- Tailwind CSS untuk Rekabentuk Moden -->
+    <script src="https://jsdelivr.net"></script>
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <!-- SheetJS untuk Eksport Excel -->
+    <script src="https://cloudflare.com"></script>
+    <!-- jsPDF untuk Eksport PDF -->
+    <script src="https://cloudflare.com"></script>
+    <script src="https://cloudflare.com"></script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <!-- Header / Profil Persatuan -->
+    <header class="bg-blue-700 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-white/10 rounded-full text-3xl">
+                    <i class="fa-solid font-black">🤝</i>
+                </div>
+                <div>
+                    <input type="text" id="associationName" value="Persatuan Kebajikan Komuniti Prihatin" class="bg-transparent border-b border-transparent hover:border-white focus:border-white focus:outline-none text-2xl font-bold w-full transition-all">
+                    <input type="text" id="associationDesc" value="Pendaftaran No: PPM-015-10-2026 | Ditubuhkan: 2026" class="bg-transparent border-b border-transparent hover:border-white focus:border-white focus:outline-none text-sm text-blue-100 w-full transition-all">
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="bg-blue-800 px-4 py-2 rounded-lg font-semibold text-sm border border-blue-500">
+                    💰 Yuran Wajib: RM10.00 / Setahun
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- Dashboard Statistik ringkas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-500 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium uppercase">Ahli Aktif</p>
+                    <p class="text-3xl font-bold mt-1" id="statActive">0</p>
+                </div>
+                <i class="fa-solid fa-user-check text-green-500 text-3xl opacity-40"></i>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-red-500 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium uppercase">Ahli Tidak Aktif</p>
+                    <p class="text-3xl font-bold mt-1" id="statInactive">0</p>
+                </div>
+                <i class="fa-solid fa-user-xmark text-red-500 text-3xl opacity-40"></i>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500 flex justify-between items-center">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium uppercase">Jumlah Kutipan</p>
+                    <p class="text-3xl font-bold mt-1" id="statTotalFunds">RM 0.00</p>
+                </div>
+                <i class="fa-solid fa-wallet text-blue-500 text-3xl opacity-40"></i>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Bahagian Kiri: Borang & QR Code -->
+            <div class="space-y-8">
+                <!-- Borang Pendaftaran -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus text-blue-600"></i> Daftar / Kemas Kini Ahli
+                    </h2>
+                    <form id="memberForm" class="space-y-4">
+                        <input type="hidden" id="memberId">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Penuh</label>
+                            <input type="text" id="fullName" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Nombor IC (Tanpa -)</label>
+                            <input type="text" id="icNumber" required placeholder="Contoh: 850215145566" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">No. Telefon (WhatsApp)</label>
+                            <input type="text" id="phone" required placeholder="Contoh: 60123456789" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Tarikh Bayar</label>
+                                <input type="date" id="payDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 mb-1">Kaedah Bayaran</label>
+                                <select id="payMethod" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                    <option value="Tunai">Tunai</option>
+                                    <option value="Online Banking">Online Banking</option>
+                                    <option value="QR Code">QR Code</option>
+                                    <option value="Belum Bayar">Belum Bayar</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg text-sm transition-colors cursor-pointer">
+                            Simpan Rekod Ahli
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Ruangan QR Code Bayaran -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center">
+                    <h3 class="text-sm font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-qrcode text-gray-700"></i> QR Code Pembayaran Persatuan
+                    </h3>
+                    <p class="text-xs text-gray-500 mb-4">Ahli boleh imbas QR ini untuk bayaran yuran RM10/tahun</p>
+                    <div class="border-2 border-dashed border-gray-200 rounded-lg p-6 bg-gray-50 flex flex-col items-center justify-center min-h-[180px]">
+                        <!-- Ruangan Placeholder QR Code -->
+                        <div class="text-gray-400 text-4xl mb-2">📸</div>
+                        <p class="text-xs text-gray-400 font-medium">Sila letakkan gambar QR Bank/DuitNow anda di sini kelak</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bahagian Kanan: Carian & Senarai Ahli -->
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <!-- Bar Carian & Eksport -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
+                        <div class="relative w-full sm:w-72">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400 text-sm"></i>
+                            <input type="text" id="searchIC" oninput="filterMembers()" placeholder="Cari menggunakan No. IC..." class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button onclick="exportToExcel()" class="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer">
+                                <i class="fa-solid fa-file-excel"></i> Excel
+                            </button>
+                            <button onclick="exportToPDF()" class="flex-1 sm:flex-initial bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer">
+                                <i class="fa-solid fa-file-pdf"></i> PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Jadual Senarai Ahli -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
